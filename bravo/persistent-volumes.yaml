@@ -1,0 +1,36 @@
+---
+# Access modes: ReadWriteOnce
+# Volume Name: drupal-pv
+# Storage: 5Gi
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: drupal-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/drupal-data"
+---
+# Volume Name: drupal-mysql-pv
+# Storage: 5Gi
+# Access modes: ReadWriteOnce
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: drupal-mysql-pv
+  labels:
+    type: local
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/drupal-mysql-data"
