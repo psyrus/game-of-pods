@@ -1,0 +1,12 @@
+# Create a pod for fileserver, name: 'gop-fileserver'
+# pod: gop-fileserver image: 'kodekloud/fileserver'
+# pod: gop-fileserver mountPath: '/web'
+# pod: gop-fileserver volumeMount name: 'data-store'
+# pod: gop-fileserver persistent volume name: data-store
+# pod: gop-fileserver persistent volume claim used: 'data-pvc'
+
+---
+
+# New Service, name: 'gop-fs-service'
+# Service name: gop-fs-service, port: '8080'
+# Service name: gop-fs-service, targetPort: '8080'
