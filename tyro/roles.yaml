@@ -1,0 +1,34 @@
+---
+# 'developer-role', should have all(*) permissions for services in development namespace
+# 'developer-role', should have all permissions(*) for persistentvolumeclaims in development namespace
+# 'developer-role', should have all(*) permissions for pods in development namespace
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: developer-role
+  namespace: development
+rules:
+- apiGroups:
+  - ""
+  resources:
+  - services
+  - pods
+  - persistentvolumeclaims
+  verbs:
+  - '*'
+---
+# create rolebinding = developer-rolebinding, role= 'developer-role', namespace = development
+# rolebinding = developer-rolebinding associated with user = 'drogo'
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: developer-rolebinding
+  namespace: development
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: developer-role
+subjects:
+- apiGroup: rbac.authorization.k8s.io
+  kind: User
+  name: drogo
