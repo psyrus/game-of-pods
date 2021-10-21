@@ -22,14 +22,13 @@ spec:
   selector:
     matchLabels:
       app: redis-cluster # has to match .spec.template.metadata.labels
-  serviceName: "nginx"
+  serviceName: "redis-cluster-service"
   replicas: 6 # by default is 1
   template:
     metadata:
       labels:
         app: redis-cluster # has to match .spec.selector.matchLabels
     spec:
-      terminationGracePeriodSeconds: 10
       containers:
       - name: redis
         image: redis:5.0.1-alpine
@@ -43,7 +42,6 @@ spec:
         - name: conf
           mountPath: /conf
           readOnly: false
-          defaultMode: '0755'
         - name: data
           mountPath: /data
           readOnly: false
@@ -56,6 +54,7 @@ spec:
       - name: conf
         configMap:
           name: redis-cluster-configmap
+          defaultMode: 0775
   volumeClaimTemplates:
   - metadata:
       name: data
@@ -64,10 +63,24 @@ spec:
       resources:
         requests:
           storage: 1Gi
-# Volume Mount - name: 'conf', mountPath: '/conf', readOnly:'false' (ConfigMap Mount)
-# Volume Mount - name: 'conf', mountPath: '/conf', defaultMode = '0755' (ConfigMap Mount)
-# Volume Mount - name: 'data', mountPath: '/data', readOnly:'false' (volumeClaim)
-# volumes - name: 'conf', Type: 'ConfigMap', ConfigMap Name: 'redis-cluster-configmap',
-# volumeClaimTemplates - name: 'data'
-# volumeClaimTemplates - accessModes: 'ReadWriteOnce'
-# volumeClaimTemplates - Storage Request: '1Gi'
+---
+# Ports - service name 'redis-cluster-service', port name: 'client', port: '6379'
+# Ports - service name 'redis-cluster-service', port name: 'gossip', port: '16379'
+# Ports - service name 'redis-cluster-service', port name: 'client', targetPort: '6379'
+# Ports - service name 'redis-cluster-service', port name: 'gossip', targetPort: '16379'
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis-cluster-service
+spec:
+  selector:
+    app: redis-cluster
+  ports:
+    - protocol: TCP
+      port: 6379
+      targetPort: 6379
+      name: client
+    - protocol: TCP
+      port: 16379
+      targetPort: 16379
+      name: gossip
